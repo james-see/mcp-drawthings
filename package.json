@@ -1,6 +1,6 @@
 {
   "name": "mcp-drawthings",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MCP server for Draw Things - local AI image generation on Mac",
   "type": "module",
   "main": "dist/index.js",
