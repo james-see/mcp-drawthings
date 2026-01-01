@@ -15,10 +15,6 @@ export declare class DrawThingsClient {
         message: string;
     }>;
     /**
-     * List available models
-     */
-    listModels(): Promise<unknown[]>;
-    /**
      * Get the current Draw Things configuration
      */
     getConfig(): Promise<DrawThingsConfig>;

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mcp-drawthings - AI Image Generation MCP Server for Draw Things</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="MCP server for Draw Things - Enable LLMs like Claude and Cursor to generate AI images locally on Mac using Stable Diffusion. Text-to-image and image-to-image generation via Model Context Protocol.">
+    <meta name="keywords" content="MCP, Model Context Protocol, Draw Things, AI, image generation, Stable Diffusion, Mac, Apple Silicon, Claude, Cursor, LLM, txt2img, img2img, local AI">
+    <meta name="author" content="james-see">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="mcp-drawthings - AI Image Generation for LLMs">
+    <meta property="og:description" content="Enable Claude, Cursor, and other LLMs to generate images locally on Mac using Draw Things and Stable Diffusion.">
+    <meta property="og:url" content="https://james-see.github.io/mcp-drawthings/">
+    <meta property="og:image" content="https://james-see.github.io/mcp-drawthings/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="mcp-drawthings - AI Image Generation MCP Server">
+    <meta name="twitter:description" content="Enable LLMs to generate images locally on Mac using Draw Things.">
+    
+    <!-- JSON-LD Structured Data for LLM Scraping -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "mcp-drawthings",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS",
+        "description": "MCP (Model Context Protocol) server for Draw Things app. Enables LLMs like Claude and Cursor to generate AI images locally on Mac using Stable Diffusion and other models. Supports text-to-image (txt2img) and image-to-image (img2img) generation.",
+        "url": "https://james-see.github.io/mcp-drawthings/",
+        "downloadUrl": "https://www.npmjs.com/package/mcp-drawthings",
+        "softwareVersion": "1.1.0",
+        "author": {
+            "@type": "Person",
+            "name": "james-see",
+            "url": "https://github.com/james-see"
+        },
+        "codeRepository": "https://github.com/james-see/mcp-drawthings",
+        "programmingLanguage": "TypeScript",
+        "runtimePlatform": "Node.js",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Text-to-image generation (txt2img)",
+            "Image-to-image transformation (img2img)",
+            "Local AI processing on Apple Silicon",
+            "MCP protocol for LLM integration",
+            "Configurable output directory",
+            "Support for multiple Stable Diffusion models"
+        ],
+        "softwareRequirements": [
+            "macOS with Apple Silicon (M1/M2/M3/M4)",
+            "Draw Things app installed",
+            "Node.js 18+"
+        ]
+    }
+    </script>
+
+    <!-- llms.txt style metadata -->
+    <meta name="llm:name" content="mcp-drawthings">
+    <meta name="llm:type" content="MCP Server">
+    <meta name="llm:tools" content="generate_image, transform_image, check_status, get_config">
+    <meta name="llm:install" content="npx -y mcp-drawthings">
+    <meta name="llm:protocol" content="Model Context Protocol (MCP)">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Outfit:wght@300;400;600&display=swap');
+        
+        :root {
+            --pink: #ff71ce;
+            --cyan: #01cdfe;
+            --purple: #b967ff;
+            --blue: #05ffa1;
+            --yellow: #fffb96;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(180deg, var(--darker) 0%, #16213e 50%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,113,206,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,113,206,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 500px;
+            z-index: -1;
+        }
+        
+        .grid-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, var(--darker));
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .logo {
+            font-family: 'VT323', monospace;
+            font-size: 4rem;
+            background: linear-gradient(90deg, var(--pink), var(--cyan), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255,113,206,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255,113,206,0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(1,205,254,0.5)); }
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--cyan);
+            margin-top: 1rem;
+            font-weight: 300;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--pink);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--pink);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .badge:hover {
+            background: var(--pink);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--pink);
+        }
+        
+        .install-box {
+            background: rgba(0,0,0,0.5);
+            border: 2px solid var(--purple);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .install-box h2 {
+            font-family: 'VT323', monospace;
+            color: var(--purple);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .install-cmd {
+            background: var(--darker);
+            border: 1px solid var(--cyan);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            color: var(--cyan);
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .install-cmd:hover {
+            box-shadow: 0 0 20px var(--cyan);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .feature {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,113,206,0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            border-color: var(--pink);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255,113,206,0.2);
+        }
+        
+        .feature h3 {
+            font-family: 'VT323', monospace;
+            color: var(--cyan);
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .tools {
+            margin: 3rem 0;
+        }
+        
+        .tools h2 {
+            font-family: 'VT323', monospace;
+            color: var(--pink);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .tool {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--blue);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .tool-name {
+            font-family: 'VT323', monospace;
+            color: var(--blue);
+            font-size: 1.3rem;
+        }
+        
+        .tool-desc {
+            color: rgba(255,255,255,0.7);
+            margin-top: 0.5rem;
+        }
+        
+        .config-example {
+            background: var(--darker);
+            border: 1px solid var(--purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        
+        .config-example h3 {
+            font-family: 'VT323', monospace;
+            color: var(--purple);
+            margin-bottom: 1rem;
+        }
+        
+        pre {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: var(--yellow);
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .cta {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-primary {
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            color: white;
+        }
+        
+        .cta-primary:hover {
+            box-shadow: 0 0 30px var(--pink);
+            transform: scale(1.05);
+        }
+        
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+        }
+        
+        .cta-secondary:hover {
+            background: var(--cyan);
+            color: var(--dark);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255,113,206,0.2);
+            margin-top: 3rem;
+        }
+        
+        footer p {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        footer a {
+            color: var(--pink);
+            text-decoration: none;
+        }
+        
+        .sun {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(180deg, var(--yellow) 0%, var(--pink) 50%, var(--purple) 100%);
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        @media (max-width: 600px) {
+            .logo { font-size: 2.5rem; }
+            .container { padding: 1rem; }
+            header { padding: 2rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="sun"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo">mcp-drawthings</h1>
+            <p class="tagline">AI Image Generation for LLMs via Draw Things</p>
+            
+            <div class="badges">
+                <a href="https://www.npmjs.com/package/mcp-drawthings" class="badge">npm v1.1.0</a>
+                <a href="https://github.com/james-see/mcp-drawthings" class="badge">GitHub</a>
+                <span class="badge">macOS</span>
+                <span class="badge">Apple Silicon</span>
+                <span class="badge">MCP</span>
+            </div>
+        </header>
+        
+        <div class="install-box">
+            <h2>// QUICK INSTALL</h2>
+            <code class="install-cmd" onclick="navigator.clipboard.writeText('npx -y mcp-drawthings')">
+                npx -y mcp-drawthings
+            </code>
+            <p style="margin-top: 1rem; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                Click to copy
+            </p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>// TXT2IMG</h3>
+                <p>Generate images from text prompts using Stable Diffusion models running locally on your Mac.</p>
+            </div>
+            <div class="feature">
+                <h3>// IMG2IMG</h3>
+                <p>Transform existing images with AI-powered modifications guided by text descriptions.</p>
+            </div>
+            <div class="feature">
+                <h3>// LOCAL AI</h3>
+                <p>All processing runs on your Mac using Apple Silicon. No cloud, no API costs, full privacy.</p>
+            </div>
+            <div class="feature">
+                <h3>// MCP NATIVE</h3>
+                <p>Built for Model Context Protocol. Works with Claude Desktop, Cursor, and any MCP client.</p>
+            </div>
+        </div>
+        
+        <div class="tools">
+            <h2>// AVAILABLE TOOLS</h2>
+            
+            <div class="tool">
+                <div class="tool-name">generate_image</div>
+                <div class="tool-desc">Generate an image from a text prompt. Supports width, height, steps, cfg_scale, seed, and negative prompts.</div>
+            </div>
+            
+            <div class="tool">
+                <div class="tool-name">transform_image</div>
+                <div class="tool-desc">Transform an existing image using img2img. Control denoising strength for subtle or dramatic changes.</div>
+            </div>
+            
+            <div class="tool">
+                <div class="tool-name">check_status</div>
+                <div class="tool-desc">Verify Draw Things API server is running and accessible.</div>
+            </div>
+            
+            <div class="tool">
+                <div class="tool-name">get_config</div>
+                <div class="tool-desc">Get current Draw Things configuration including loaded model and settings.</div>
+            </div>
+        </div>
+        
+        <div class="config-example">
+            <h3>// CURSOR CONFIG (.cursor/mcp.json)</h3>
+<pre>{
+  "mcpServers": {
+    "drawthings": {
+      "command": "npx",
+      "args": ["-y", "mcp-drawthings"]
+    }
+  }
+}</pre>
+        </div>
+        
+        <div class="config-example">
+            <h3>// CLAUDE DESKTOP CONFIG</h3>
+<pre>{
+  "mcpServers": {
+    "drawthings": {
+      "command": "npx",
+      "args": ["-y", "mcp-drawthings"]
+    }
+  }
+}</pre>
+        </div>
+        
+        <div class="cta-buttons">
+            <a href="https://github.com/james-see/mcp-drawthings" class="cta cta-primary">View on GitHub</a>
+            <a href="https://www.npmjs.com/package/mcp-drawthings" class="cta cta-secondary">npm Package</a>
+            <a href="https://drawthings.ai" class="cta cta-secondary">Get Draw Things</a>
+        </div>
+        
+        <footer>
+            <p>Built with love for the AI community</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://github.com/james-see">@james-see</a> · 
+                <a href="https://modelcontextprotocol.io">Model Context Protocol</a> · 
+                <a href="https://drawthings.ai">Draw Things</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -42,16 +42,6 @@ export class DrawThingsClient {
         }
     }
     /**
-     * List available models
-     */
-    async listModels() {
-        const response = await fetch(`${this.baseUrl}/sdapi/v1/sd-models`);
-        if (!response.ok) {
-            throw new Error(`Failed to list models: ${response.status} ${response.statusText}`);
-        }
-        return (await response.json());
-    }
-    /**
      * Get the current Draw Things configuration
      */
     async getConfig() {

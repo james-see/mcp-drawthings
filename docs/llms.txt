@@ -1,0 +1,83 @@
+# mcp-drawthings
+
+> MCP server for Draw Things - local AI image generation on Mac
+
+## Overview
+
+mcp-drawthings is a Model Context Protocol (MCP) server that enables LLMs like Claude and Cursor to generate images locally on Mac using the Draw Things app. All processing runs on Apple Silicon - no cloud APIs, no costs, full privacy.
+
+## Installation
+
+```
+npx -y mcp-drawthings
+```
+
+## MCP Configuration
+
+Add to your MCP client config:
+
+```json
+{
+  "mcpServers": {
+    "drawthings": {
+      "command": "npx",
+      "args": ["-y", "mcp-drawthings"]
+    }
+  }
+}
+```
+
+## Available Tools
+
+### generate_image
+Generate an image from a text prompt using Stable Diffusion.
+
+Parameters:
+- prompt (required): Text description of the image
+- negative_prompt: Elements to exclude
+- width: Image width (default: 512)
+- height: Image height (default: 512)
+- steps: Inference steps (default: 20)
+- cfg_scale: Guidance scale (default: 7.5)
+- seed: Random seed (-1 for random)
+- output_path: Custom save path
+
+### transform_image
+Transform an existing image using img2img.
+
+Parameters:
+- prompt (required): Transformation description
+- image_path or image_base64 (required): Source image
+- negative_prompt: Elements to exclude
+- denoising_strength: Transformation strength (0.0-1.0, default: 0.75)
+- steps: Inference steps (default: 20)
+- seed: Random seed
+
+### check_status
+Check if Draw Things API server is running.
+
+### get_config
+Get current Draw Things configuration and loaded model.
+
+## Requirements
+
+- macOS with Apple Silicon (M1/M2/M3/M4)
+- Draw Things app with HTTP API Server enabled (port 7860)
+- Node.js 18+
+
+## Links
+
+- npm: https://www.npmjs.com/package/mcp-drawthings
+- GitHub: https://github.com/james-see/mcp-drawthings
+- Draw Things: https://drawthings.ai
+- MCP Protocol: https://modelcontextprotocol.io
+
+## Environment Variables
+
+- DRAWTHINGS_HOST: API host (default: localhost)
+- DRAWTHINGS_PORT: API port (default: 7860)
+- DRAWTHINGS_OUTPUT_DIR: Image save directory (default: ~/Pictures/drawthings-mcp)
+
+## License
+
+MIT
