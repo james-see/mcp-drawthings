@@ -1,0 +1,48 @@
+{
+  "name": "mcp-drawthings",
+  "version": "1.0.0",
+  "description": "MCP server for Draw Things - local AI image generation on Mac",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-drawthings": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "draw-things",
+    "ai",
+    "image-generation",
+    "stable-diffusion",
+    "macos",
+    "apple-silicon"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mcp-drawthings"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
