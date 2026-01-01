@@ -37,6 +37,10 @@ export const generateImageSchema = z.object({
         .int()
         .optional()
         .describe("Random seed for reproducibility (-1 for random)"),
+    model: z
+        .string()
+        .optional()
+        .describe("Model filename to use for generation (use list_models to see available models)"),
     output_path: z
         .string()
         .optional()
@@ -64,6 +68,7 @@ export async function generateImage(client, params) {
             steps: params.steps,
             cfg_scale: params.cfg_scale,
             seed: params.seed,
+            model: params.model,
         });
         if (!response.images || response.images.length === 0) {
             return [

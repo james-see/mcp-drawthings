@@ -14,6 +14,11 @@ import {
   getConfig,
 } from "./tools/get-config.js";
 import {
+  listModelsSchema,
+  listModelsDescription,
+  listModels,
+} from "./tools/list-models.js";
+import {
   generateImageSchema,
   generateImageDescription,
   generateImage,
@@ -50,6 +55,16 @@ server.tool(
   getConfigSchema.shape,
   async () => {
     const result = await getConfig(client);
+    return { content: result };
+  }
+);
+
+server.tool(
+  "list_models",
+  listModelsDescription,
+  listModelsSchema.shape,
+  async () => {
+    const result = await listModels(client);
     return { content: result };
   }
 );

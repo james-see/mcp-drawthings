@@ -8,9 +8,11 @@ export declare const generateImageSchema: z.ZodObject<{
     steps: z.ZodOptional<z.ZodNumber>;
     cfg_scale: z.ZodOptional<z.ZodNumber>;
     seed: z.ZodOptional<z.ZodNumber>;
+    model: z.ZodOptional<z.ZodString>;
     output_path: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     prompt: string;
+    model?: string | undefined;
     steps?: number | undefined;
     cfg_scale?: number | undefined;
     width?: number | undefined;
@@ -20,6 +22,7 @@ export declare const generateImageSchema: z.ZodObject<{
     output_path?: string | undefined;
 }, {
     prompt: string;
+    model?: string | undefined;
     steps?: number | undefined;
     cfg_scale?: number | undefined;
     width?: number | undefined;

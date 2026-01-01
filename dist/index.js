@@ -4,6 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { DrawThingsClient } from "./client/drawthings.js";
 import { checkStatusSchema, checkStatusDescription, checkStatus, } from "./tools/check-status.js";
 import { getConfigSchema, getConfigDescription, getConfig, } from "./tools/get-config.js";
+import { listModelsSchema, listModelsDescription, listModels, } from "./tools/list-models.js";
 import { generateImageSchema, generateImageDescription, generateImage, } from "./tools/generate-image.js";
 import { transformImageSchema, transformImageDescription, transformImage, } from "./tools/transform-image.js";
 // Create the Draw Things client
@@ -20,6 +21,10 @@ server.tool("check_status", checkStatusDescription, checkStatusSchema.shape, asy
 });
 server.tool("get_config", getConfigDescription, getConfigSchema.shape, async () => {
     const result = await getConfig(client);
+    return { content: result };
+});
+server.tool("list_models", listModelsDescription, listModelsSchema.shape, async () => {
+    const result = await listModels(client);
     return { content: result };
 });
 server.tool("generate_image", generateImageDescription, generateImageSchema.shape, async (params) => {

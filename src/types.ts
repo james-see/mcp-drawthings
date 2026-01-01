@@ -23,6 +23,7 @@ export interface Txt2ImgRequest {
   seed?: number;
   sampler?: string;
   batch_size?: number;
+  model?: string;
 }
 
 export interface Img2ImgRequest {
