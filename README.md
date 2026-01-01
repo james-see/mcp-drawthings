@@ -145,7 +145,7 @@ Transform an existing image using a text prompt (img2img).
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mcp-drawthings
+git clone https://github.com/james-see/mcp-drawthings
 cd mcp-drawthings
 
 # Install dependencies

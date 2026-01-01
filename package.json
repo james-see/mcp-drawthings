@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/mcp-drawthings"
+    "url": "https://github.com/james-see/mcp-drawthings"
   },
   "engines": {
     "node": ">=18.0.0"
